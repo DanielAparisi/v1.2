@@ -25,6 +25,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "apiKey": "AIzaSyDCQiMz9S90MGoZoZ6l24_nZKTZNUd0rFU",
+      "authDomain": "project2-471c1.firebaseapp.com",
+      "projectId": "project2-471c1",
+      "storageBucket": "project2-471c1.firebasestorage.app",
+      "messagingSenderId": "1019350076027",
+      "appId": "1:1019350076027:android:4a5f34b4092233eb67f0de",
+      "databaseURL": "https://project2-471c1-default-rtdb.europe-west1.firebasedatabase.app/"
     }
   }
 }
