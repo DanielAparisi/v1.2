@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Pressable, Text, View, TextInput, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { Pressable, Text, View, TextInput, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
 import "./global.css"
 import { useState } from 'react';
 
@@ -24,14 +24,18 @@ export default function App() {
           <View className="flex-1 bg-white">
             {/* Header Section */}
             <View className="flex-1 justify-center items-center px-8 pt-20">
-              {/* Logo/Icon Placeholder */}
-              <View className="w-20 h-20 bg-gray-200 rounded-full items-center justify-center mb-8">
-                <Text className="text-black text-3xl font-bold">🔐</Text>
+              {/* Logo/Icon */}
+              <View className="w-24 h-24 items-center justify-center mb-8">
+                <Image 
+                  source={require('./assets/logoliga.webp')} 
+                  className="w-full h-full"
+                  resizeMode="contain"
+                />
               </View>
               
               {/* Welcome Text */}
               <Text className="text-black text-3xl font-bold text-center mb-2">
-                Welcome To Liga A+77
+                Welcome To Liga A+7
               </Text>
               <Text className="text-gray-600 text-base text-center mb-8">
                 {isSignUp ? 'Create your account to get started' : 'Sign in to continue to your account'}
