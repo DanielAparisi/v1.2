@@ -15,11 +15,11 @@ export default function App() {
 
   return (
     <>
-      <StatusBar style='light' />
+      <StatusBar style='dark' />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1"
-      >
+      >   
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <View className="flex-1 bg-white">
             {/* Header Section */}
