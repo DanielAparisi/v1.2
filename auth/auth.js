@@ -34,6 +34,7 @@ export const signIn = async (email, password) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
+    const userToken = await userCredential.user.getIdToken()
     
     console.log('User signed in successfully:', user.uid);
     return { success: true, user };

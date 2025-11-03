@@ -5,6 +5,7 @@ import { useState, useRef } from 'react';
 import { signIn, signUp } from './auth/auth';
 import SoccerSpinner from './components/SoccerSpinner';
 import SoccerLoadingScreen from './components/SoccerLoadingScreen';
+import SuccessModal from './components/SuccessModal';
 
 export default function App() {
   const [email, setEmail] = useState("")
@@ -13,8 +14,15 @@ export default function App() {
   const [isSignUp, setIsSignUp] = useState(false)
   const [emailFocused, setEmailFocused] = useState(false)
   const [passwordFocused, setPasswordFocused] = useState(false)
+  const [emailValid, setEmailValid] = useState(true)
+  const [passwordValid, setPasswordValid] = useState(true)
   const [emailError, setEmailError] = useState(false)
   const [passwordError, setPasswordError] = useState(false)
+  
+  // Modal states
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [modalTitle, setModalTitle] = useState("")
+  const [modalMessage, setModalMessage] = useState("")
   
   // Refs for TextInputs to manage focus
   const emailRef = useRef<TextInput>(null);
@@ -70,24 +78,24 @@ export default function App() {
     return '#D1D5DB'; // Gray for default
   };
 
-    // Handle Sign In
+        // Handle Sign In
   const handleSignIn = async () => {
     if (!email || !password) {
-      Alert.alert('Missing Information', 'Please fill in all fields');
+      Alert.alert('Información Faltante', 'Por favor completa todos los campos');
       return;
     }
 
-    if (!isValidGmailEmail(email)) {
-      Alert.alert('Invalid Email', 'Please enter a valid @gmail.com email address');
-      setEmailError(true);
+    if (emailError) {
+      Alert.alert('Email Inválido', 'Por favor ingresa un email que termine en @gmail.com');
       emailRef.current?.focus();
+      setEmailError(true);
       return;
     }
 
-    if (!isValidPassword(password)) {
-      Alert.alert('Invalid Password', 'Password must be at least 6 characters long');
-      setPasswordError(true);
+    if (passwordError) {
+      Alert.alert('Contraseña Débil', 'La contraseña debe tener al menos 6 caracteres');
       passwordRef.current?.focus();
+      setPasswordError(true);
       return;
     }
 
@@ -95,10 +103,12 @@ export default function App() {
     const result = await signIn(email, password);
     
     if (result.success) {
-      Alert.alert('Welcome!', 'Successfully signed in to Liga A+7!');
+      setModalTitle('¡Bienvenido!')
+      setModalMessage('Has iniciado sesión exitosamente en Liga A+7. ¡Prepárate para jugar!')
+      setShowSuccessModal(true)
       // Navigate to main app here
     } else {
-      Alert.alert('Sign In Failed', result.error);
+      Alert.alert('Error de Inicio de Sesión', result.error);
     }
     setLoading(false);
   };
@@ -106,21 +116,21 @@ export default function App() {
   // Handle Sign Up
   const handleSignUp = async () => {
     if (!email || !password) {
-      Alert.alert('Missing Information', 'Please fill in all fields');
+      Alert.alert('Información Faltante', 'Por favor completa todos los campos');
       return;
     }
 
-    if (!isValidGmailEmail(email)) {
-      Alert.alert('Invalid Email', 'Please enter a valid @gmail.com email address');
-      setEmailError(true);
+    if (emailError) {
+      Alert.alert('Email Inválido', 'Por favor ingresa un email que termine en @gmail.com');
       emailRef.current?.focus();
+      setEmailError(true);
       return;
     }
 
-    if (!isValidPassword(password)) {
-      Alert.alert('Weak Password', 'Password must be at least 6 characters long');
-      setPasswordError(true);
+    if (passwordError) {
+      Alert.alert('Contraseña Débil', 'La contraseña debe tener al menos 6 caracteres');
       passwordRef.current?.focus();
+      setPasswordError(true);
       return;
     }
 
@@ -128,10 +138,12 @@ export default function App() {
     const result = await signUp(email, password);
     
     if (result.success) {
-      Alert.alert('Success', 'Account created successfully! Welcome to Liga A+7!');
+      setModalTitle('¡Cuenta Creada!')
+      setModalMessage('Tu cuenta ha sido creada exitosamente. ¡Bienvenido a Liga A+7!')
+      setShowSuccessModal(true)
       // Navigate to main app here
     } else {
-      Alert.alert('Sign Up Failed', result.error);
+      Alert.alert('Error al Crear Cuenta', result.error);
     }
     setLoading(false);
   };
@@ -343,6 +355,14 @@ export default function App() {
             </ScrollView>
         </KeyboardAvoidingView>
       )}
+      
+      {/* Success Modal */}
+      <SuccessModal
+        visible={showSuccessModal}
+        title={modalTitle}
+        message={modalMessage}
+        onClose={() => setShowSuccessModal(false)}
+      />
     </>
   );
 }

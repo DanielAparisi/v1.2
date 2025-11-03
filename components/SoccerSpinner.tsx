@@ -1,65 +1,56 @@
-import React from 'react';
-import { View, Text, Animated } from 'react-native';
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { View, Animated, StyleSheet } from 'react-native';
 
-const SoccerSpinner = ({ size = 30, color = '#22C55E' }) => {
+const SoccerSpinner = ({ size = 48, color = '#E5E7EB' }) => {
+  // Single rotating ring spinner (visual: arc created by using one colored border side)
   const spinValue = useRef(new Animated.Value(0)).current;
-  const bounceValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Spinning animation
     const spin = Animated.loop(
       Animated.timing(spinValue, {
         toValue: 1,
-        duration: 2000,
+        duration: 900,
         useNativeDriver: true,
       })
     );
 
-    // Bouncing animation
-    const bounce = Animated.loop(
-      Animated.sequence([
-        Animated.timing(bounceValue, {
-          toValue: -10,
-          duration: 600,
-          useNativeDriver: true,
-        }),
-        Animated.timing(bounceValue, {
-          toValue: 0,
-          duration: 600,
-          useNativeDriver: true,
-        }),
-      ])
-    );
-
     spin.start();
-    bounce.start();
+    return () => spin.stop();
+  }, [spinValue]);
 
-    return () => {
-      spin.stop();
-      bounce.stop();
-    };
-  }, [spinValue, bounceValue]);
-
-  const spinInterpolate = spinValue.interpolate({
+  const rotate = spinValue.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg'],
   });
 
+  const border = Math.max(3, Math.floor(size / 8));
+
   return (
-    <View className="items-center justify-center">
+    <View style={[styles.container, { width: size * 1.8, height: size * 1.8 }]}>
       <Animated.View
-        style={{
-          transform: [
-            { rotate: spinInterpolate },
-            { translateY: bounceValue }
-          ],
-        }}
-      >
-        <Text style={{ fontSize: size, color: color }}>⚽</Text>
-      </Animated.View>
+        style={[
+          {
+            width: size,
+            height: size,
+            borderRadius: size / 2,
+            borderWidth: border,
+            borderTopColor: color,
+            borderRightColor: 'transparent',
+            borderBottomColor: 'transparent',
+            borderLeftColor: color,
+            transform: [{ rotate }],
+          },
+        ]}
+      />
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 export default SoccerSpinner;
