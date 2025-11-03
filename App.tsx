@@ -2,7 +2,9 @@ import { StatusBar } from 'expo-status-bar';
 import { Pressable, Text, View, TextInput, KeyboardAvoidingView, Platform, ScrollView, Image, Alert } from 'react-native';
 import "./global.css"
 import { useState } from 'react';
-import { signIn, signUp, signInWithGoogle } from './auth/auth';
+import { signIn, signUp } from './auth/auth';
+import SoccerSpinner from './components/SoccerSpinner';
+import SoccerLoadingScreen from './components/SoccerLoadingScreen';
 
 export default function App() {
   const [email, setEmail] = useState("")
@@ -53,27 +55,16 @@ export default function App() {
     setLoading(false);
   };
 
-  // Handle Google Sign In
-  const handleGoogleSignIn = async () => {
-    setLoading(true);
-    const result = await signInWithGoogle();
-    
-    if (result.success) {
-      Alert.alert('Success', 'Welcome to Liga A+7!');
-      // Navigate to main app here
-    } else {
-      Alert.alert('Google Sign In Failed', result.error);
-    }
-    setLoading(false);
-  };
-
   return (
     <>
-      <StatusBar style='dark' />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1"
-      >   
+      <StatusBar style='light' />
+      {loading ? (
+        <SoccerLoadingScreen message={isSignUp ? 'Creating your account...' : 'Signing you in...'} />
+      ) : (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          className="flex-1"
+        >   
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <View className="flex-1 bg-white">
             {/* Header Section */}
@@ -139,32 +130,19 @@ export default function App() {
                   disabled={loading}
                   className={`bg-blue-600 rounded-xl py-4 items-center mb-4 ${loading ? 'opacity-70' : ''}`}
                 >
-                  <Text className="text-white text-base font-semibold">
-                    {loading ? 'Loading...' : isSignUp ? 'Create Account' : 'Sign In'}
-                  </Text>
+                  {loading ? (
+                    <View className="flex-row items-center">
+                      <SoccerSpinner size={20} color="#FFFFFF" />
+                      <Text className="text-white text-base font-semibold ml-2">
+                        {isSignUp ? 'Creating Account...' : 'Signing In...'}
+                      </Text>
+                    </View>
+                  ) : (
+                    <Text className="text-white text-base font-semibold">
+                      {isSignUp ? 'Create Account' : 'Sign In'}
+                    </Text>
+                  )}
                 </Pressable>
-
-                {/* Divider */}
-                <View className="flex-row items-center mb-4">
-                  <View className="flex-1 h-px bg-gray-300" />
-                  <Text className="text-gray-500 text-sm mx-4">OR</Text>
-                  <View className="flex-1 h-px bg-gray-300" />
-                </View>
-
-                {/* Social Login Buttons */}
-                <View className="space-y-3 mb-6">
-                  <Pressable 
-                    onPress={handleGoogleSignIn}
-                    disabled={loading}
-                    className="bg-gray-100 border border-gray-300 rounded-xl py-3 items-center"
-                  >
-                    <Text className="text-black text-base font-medium">Continue with Google</Text>
-                  </Pressable>
-                  
-                  <Pressable className="bg-gray-100 border border-gray-300 rounded-xl py-3 items-center">
-                    <Text className="text-black text-base font-medium">Continue with Apple</Text>
-                  </Pressable>
-                </View>
 
                 {/* Toggle Sign In/Up */}
                 <View className="flex-row justify-center">
@@ -182,6 +160,7 @@ export default function App() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      )}
     </>
   );
 }
