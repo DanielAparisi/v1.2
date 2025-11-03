@@ -45,7 +45,7 @@ export default function App() {
     const result = await signUp(email, password);
     
     if (result.success) {
-      Alert.alert('Success', 'Account created successfully! Welcome to Liga A+7!');
+      Alert.alert('Success', 'Account created successfully! Welcome to Liga A+7!'); //Creame un  Modal
       // Navigate to main app here
     } else {
       Alert.alert('Sign Up Failed', result.error);

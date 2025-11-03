@@ -5,9 +5,6 @@ import {
   onAuthStateChanged,
   updateProfile,
   sendPasswordResetEmail,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signInAnonymously
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
@@ -46,38 +43,21 @@ export const signIn = async (email, password) => {
   }
 };
 
-// Sign in with Google
+// Sign in with Google (React Native implementation needed)
 export const signInWithGoogle = async () => {
   try {
-    const provider = new GoogleAuthProvider();
-    // Add additional scopes if needed
-    provider.addScope('profile');
-    provider.addScope('email');
+    // TODO: Implement Google Sign-In for React Native
+    // This requires @react-native-google-signin/google-signin package
+    // and platform-specific configuration
     
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-    
-    console.log('Google sign in successful:', user.uid);
-    return { success: true, user };
+    console.log('Google sign in not implemented yet for React Native');
+    return { success: false, error: 'Google Sign-In not implemented yet for React Native. Please use email/password for now.' };
   } catch (error) {
     console.error('Google sign in error:', error.message);
     return { success: false, error: error.message };
   }
 };
 
-// Sign in anonymously
-export const signInAnonymous = async () => {
-  try {
-    const userCredential = await signInAnonymously(auth);
-    const user = userCredential.user;
-    
-    console.log('Anonymous sign in successful:', user.uid);
-    return { success: true, user };
-  } catch (error) {
-    console.error('Anonymous sign in error:', error.message);
-    return { success: false, error: error.message };
-  }
-};
 
 // Sign out
 export const logOut = async () => {
