@@ -1,17 +1,71 @@
 import { StatusBar } from 'expo-status-bar';
-import { Pressable, Text, View, TextInput, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
+import { Pressable, Text, View, TextInput, KeyboardAvoidingView, Platform, ScrollView, Image, Alert } from 'react-native';
 import "./global.css"
 import { useState } from 'react';
-
-export const signIn = () => {}
-
-export const singUp = () => {}
+import { signIn, signUp, signInWithGoogle } from './auth/auth';
 
 export default function App() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [isSignUp, setIsSignUp] = useState(false)
+
+  // Handle Sign In
+  const handleSignIn = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    setLoading(true);
+    const result = await signIn(email, password);
+    
+    if (result.success) {
+      Alert.alert('Success', 'Welcome back to Liga A+7!');
+      // Navigate to main app here
+    } else {
+      Alert.alert('Sign In Failed', result.error);
+    }
+    setLoading(false);
+  };
+
+  // Handle Sign Up
+  const handleSignUp = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert('Error', 'Password must be at least 6 characters');
+      return;
+    }
+
+    setLoading(true);
+    const result = await signUp(email, password);
+    
+    if (result.success) {
+      Alert.alert('Success', 'Account created successfully! Welcome to Liga A+7!');
+      // Navigate to main app here
+    } else {
+      Alert.alert('Sign Up Failed', result.error);
+    }
+    setLoading(false);
+  };
+
+  // Handle Google Sign In
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    const result = await signInWithGoogle();
+    
+    if (result.success) {
+      Alert.alert('Success', 'Welcome to Liga A+7!');
+      // Navigate to main app here
+    } else {
+      Alert.alert('Google Sign In Failed', result.error);
+    }
+    setLoading(false);
+  };
 
   return (
     <>
@@ -81,11 +135,7 @@ export default function App() {
 
                 {/* Sign In/Up Button */}
                 <Pressable 
-                  onPress={() => { 
-                    setLoading(true)
-                    console.log(isSignUp ? 'Sign Up pressed' : 'Sign In pressed')
-                    setTimeout(() => setLoading(false), 1000)
-                  }}
+                  onPress={isSignUp ? handleSignUp : handleSignIn}
                   disabled={loading}
                   className={`bg-blue-600 rounded-xl py-4 items-center mb-4 ${loading ? 'opacity-70' : ''}`}
                 >
@@ -103,7 +153,11 @@ export default function App() {
 
                 {/* Social Login Buttons */}
                 <View className="space-y-3 mb-6">
-                  <Pressable className="bg-gray-100 border border-gray-300 rounded-xl py-3 items-center">
+                  <Pressable 
+                    onPress={handleGoogleSignIn}
+                    disabled={loading}
+                    className="bg-gray-100 border border-gray-300 rounded-xl py-3 items-center"
+                  >
                     <Text className="text-black text-base font-medium">Continue with Google</Text>
                   </Pressable>
                   
