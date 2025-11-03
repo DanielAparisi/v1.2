@@ -13,6 +13,8 @@ export default function App() {
   const [isSignUp, setIsSignUp] = useState(false)
   const [emailFocused, setEmailFocused] = useState(false)
   const [passwordFocused, setPasswordFocused] = useState(false)
+  const [emailError, setEmailError] = useState(false)
+  const [passwordError, setPasswordError] = useState(false)
   
   // Refs for TextInputs to manage focus
   const emailRef = useRef<TextInput>(null);
@@ -24,6 +26,50 @@ export default function App() {
     return emailRegex.test(email);
   };
 
+  // Specific email validation for @gmail.com
+  const isValidGmailEmail = (email: string) => {
+    return email.toLowerCase().endsWith('@gmail.com') && email.includes('@');
+  };
+
+  // Password validation helper
+  const isValidPassword = (password: string) => {
+    return password.length >= 6;
+  };
+
+  // Real-time validation functions
+  const validateEmail = (emailText: string) => {
+    if (emailText.length > 0) {
+      const isValid = isValidGmailEmail(emailText);
+      setEmailError(!isValid);
+    } else {
+      setEmailError(false);
+    }
+  };
+
+  const validatePassword = (passwordText: string) => {
+    if (passwordText.length > 0) {
+      const isValid = isValidPassword(passwordText);
+      setPasswordError(!isValid);
+    } else {
+      setPasswordError(false);
+    }
+  };
+
+  // Get border color based on focus and validation state
+  const getEmailBorderColor = () => {
+    if (emailError) return '#EF4444'; // Red for error
+    if (emailFocused) return '#3B82F6'; // Blue for focus
+    if (email && !emailError) return '#10B981'; // Green for valid
+    return '#D1D5DB'; // Gray for default
+  };
+
+  const getPasswordBorderColor = () => {
+    if (passwordError) return '#EF4444'; // Red for error
+    if (passwordFocused) return '#3B82F6'; // Blue for focus
+    if (password && !passwordError) return '#10B981'; // Green for valid
+    return '#D1D5DB'; // Gray for default
+  };
+
     // Handle Sign In
   const handleSignIn = async () => {
     if (!email || !password) {
@@ -31,9 +77,17 @@ export default function App() {
       return;
     }
 
-    if (!isValidEmail(email)) {
-      Alert.alert('Invalid Email', 'Please enter a valid email address');
+    if (!isValidGmailEmail(email)) {
+      Alert.alert('Invalid Email', 'Please enter a valid @gmail.com email address');
+      setEmailError(true);
       emailRef.current?.focus();
+      return;
+    }
+
+    if (!isValidPassword(password)) {
+      Alert.alert('Invalid Password', 'Password must be at least 6 characters long');
+      setPasswordError(true);
+      passwordRef.current?.focus();
       return;
     }
 
@@ -56,14 +110,16 @@ export default function App() {
       return;
     }
 
-    if (!isValidEmail(email)) {
-      Alert.alert('Invalid Email', 'Please enter a valid email address');
+    if (!isValidGmailEmail(email)) {
+      Alert.alert('Invalid Email', 'Please enter a valid @gmail.com email address');
+      setEmailError(true);
       emailRef.current?.focus();
       return;
     }
 
-    if (password.length < 6) {
+    if (!isValidPassword(password)) {
       Alert.alert('Weak Password', 'Password must be at least 6 characters long');
+      setPasswordError(true);
       passwordRef.current?.focus();
       return;
     }
@@ -139,8 +195,12 @@ export default function App() {
                         <TextInput
                           ref={emailRef}
                           value={email}
-                          onChangeText={(text) => setEmail(text.trim().toLowerCase())}
-                          placeholder="Enter your email address"
+                          onChangeText={(text) => {
+                            const cleanEmail = text.trim().toLowerCase();
+                            setEmail(cleanEmail);
+                            validateEmail(cleanEmail);
+                          }}
+                          placeholder="Enter your email address (@gmail.com)"
                           placeholderTextColor="#9CA3AF"
                           autoCapitalize="none"
                           autoCorrect={false}
@@ -155,11 +215,12 @@ export default function App() {
                           onBlur={() => {
                             console.log('Email blurred');
                             setEmailFocused(false);
+                            validateEmail(email);
                           }}
                           onSubmitEditing={() => passwordRef.current?.focus()}
                           style={{
                             backgroundColor: '#F9FAFB',
-                            borderColor: emailFocused ? '#3B82F6' : (email ? '#10B981' : '#D1D5DB'),
+                            borderColor: getEmailBorderColor(),
                             borderWidth: 2,
                             borderRadius: 12,
                             paddingHorizontal: 16,
@@ -167,14 +228,19 @@ export default function App() {
                             fontSize: 16,
                             color: '#1F2937',
                             fontWeight: '500',
-                            shadowColor: emailFocused ? '#3B82F6' : 'transparent',
+                            shadowColor: emailFocused ? '#3B82F6' : (emailError ? '#EF4444' : 'transparent'),
                             shadowOffset: { width: 0, height: 0 },
                             shadowOpacity: 0.1,
                             shadowRadius: 4,
-                            elevation: emailFocused ? 2 : 0
+                            elevation: emailFocused || emailError ? 2 : 0
                           }}
                         />
                       </Pressable>
+                      {emailError && email.length > 0 && (
+                        <Text className="text-red-500 text-xs mt-1 ml-2">
+                          Please enter a valid @gmail.com email address
+                        </Text>
+                      )}
                     </View>
 
                     {/* Password Input */}
@@ -187,8 +253,11 @@ export default function App() {
                         <TextInput
                           ref={passwordRef}
                           value={password}
-                          onChangeText={setPassword}
-                          placeholder="Enter your password"
+                          onChangeText={(text) => {
+                            setPassword(text);
+                            validatePassword(text);
+                          }}
+                          placeholder="Enter your password (min. 6 characters)"
                           placeholderTextColor="#9CA3AF"
                           secureTextEntry={true}
                           textContentType="password"
@@ -201,11 +270,12 @@ export default function App() {
                           onBlur={() => {
                             console.log('Password blurred');
                             setPasswordFocused(false);
+                            validatePassword(password);
                           }}
                           onSubmitEditing={isSignUp ? handleSignUp : handleSignIn}
                           style={{
                             backgroundColor: '#F9FAFB',
-                            borderColor: passwordFocused ? '#3B82F6' : (password ? '#10B981' : '#D1D5DB'),
+                            borderColor: getPasswordBorderColor(),
                             borderWidth: 2,
                             borderRadius: 12,
                             paddingHorizontal: 16,
@@ -213,14 +283,19 @@ export default function App() {
                             fontSize: 16,
                             color: '#1F2937',
                             fontWeight: '500',
-                            shadowColor: passwordFocused ? '#3B82F6' : 'transparent',
+                            shadowColor: passwordFocused ? '#3B82F6' : (passwordError ? '#EF4444' : 'transparent'),
                             shadowOffset: { width: 0, height: 0 },
                             shadowOpacity: 0.1,
                             shadowRadius: 4,
-                            elevation: passwordFocused ? 2 : 0
+                            elevation: passwordFocused || passwordError ? 2 : 0
                           }}
                         />
                       </Pressable>
+                      {passwordError && password.length > 0 && (
+                        <Text className="text-red-500 text-xs mt-1 ml-2">
+                          Password must be at least 6 characters long
+                        </Text>
+                      )}
                     </View>
 
                     {/* Forgot Password */}
