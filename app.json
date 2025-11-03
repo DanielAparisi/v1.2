@@ -7,6 +7,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "scheme" : "googlemaps",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -38,6 +39,9 @@
       "messagingSenderId": "1019350076027",
       "appId": "1:1019350076027:android:4a5f34b4092233eb67f0de",
       "databaseURL": "https://project2-471c1-default-rtdb.europe-west1.firebasedatabase.app/"
-    }
+    },
+    "plugins": [
+      "expo-router"
+    ]
   }
 }
