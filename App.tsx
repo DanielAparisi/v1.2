@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Pressable, Text, View, TextInput, KeyboardAvoidingView, Platform, ScrollView, Image, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { Pressable, Text, View, TextInput, KeyboardAvoidingView, Platform, ScrollView, Image, Alert, Keyboard } from 'react-native';
 import "./global.css"
 import { useState, useRef } from 'react';
 import { signIn, signUp } from './auth/auth';
@@ -92,55 +92,70 @@ export default function App() {
           keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
           style={{ flex: 1 }}
         >
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <ScrollView 
-              contentContainerStyle={{ flexGrow: 1 }}
-              keyboardShouldPersistTaps="handled"
-              showsVerticalScrollIndicator={false}
-              bounces={false}
+          <ScrollView 
+            contentContainerStyle={{ flexGrow: 1 }}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+            style={{ flex: 1 }}
+          >
+            <Pressable 
+              onPress={Keyboard.dismiss} 
               style={{ flex: 1 }}
             >
               <View className="flex-1 bg-white">
                 {/* Header Section */}
-                <View className="flex-1 justify-center items-center px-8 pt-20">
-                  {/* Logo/Icon */}
-                  <View className="w-24 h-24 items-center justify-center mb-8">
-                    <Image 
-                      source={require('./assets/logoliga.webp')} 
-                      className="w-full h-full"
-                      resizeMode="contain"
-                    />
+                <Pressable onPress={Keyboard.dismiss}>
+                  <View className="flex-1 justify-center items-center px-8 pt-20">
+                    {/* Logo/Icon */}
+                    <View className="w-24 h-24 items-center justify-center mb-8">
+                      <Image 
+                        source={require('./assets/logoliga.webp')} 
+                        className="w-full h-full"
+                        resizeMode="contain"
+                      />
+                    </View>
+                    
+                    {/* Welcome Text */}
+                    <Text className="text-black text-3xl font-bold text-center mb-2">
+                      Welcome To Liga A+7
+                    </Text>
+                    <Text className="text-gray-600 text-base text-center mb-8">
+                      {isSignUp ? 'Create your account to get started' : 'Sign in to continue to your account'}
+                    </Text>
                   </View>
-                  
-                  {/* Welcome Text */}
-                  <Text className="text-black text-3xl font-bold text-center mb-2">
-                    Welcome To Liga A+7
-                  </Text>
-                  <Text className="text-gray-600 text-base text-center mb-8">
-                    {isSignUp ? 'Create your account to get started' : 'Sign in to continue to your account'}
-                  </Text>
+                </Pressable>
 
-                  {/* Login Form */}
+                {/* Login Form - No keyboard dismiss here */}
+                <View className="items-center px-8">
                   <View className="w-full max-w-sm">
                     {/* Email Input */}
                     <View className="mb-4">
                       <Text className="text-black text-sm font-medium mb-2">Email Address</Text>
-                      <View className="relative">
+                      <Pressable 
+                        onPress={() => emailRef.current?.focus()}
+                        style={{ position: 'relative' }}
+                      >
                         <TextInput
                           ref={emailRef}
                           value={email}
                           onChangeText={(text) => setEmail(text.trim().toLowerCase())}
                           placeholder="Enter your email address"
                           placeholderTextColor="#9CA3AF"
-                          autoFocus={false}
                           autoCapitalize="none"
                           autoCorrect={false}
                           keyboardType="email-address"
                           textContentType="emailAddress"
                           autoComplete="email"
                           returnKeyType="next"
-                          onFocus={() => setEmailFocused(true)}
-                          onBlur={() => setEmailFocused(false)}
+                          onFocus={() => {
+                            console.log('Email focused');
+                            setEmailFocused(true);
+                          }}
+                          onBlur={() => {
+                            console.log('Email blurred');
+                            setEmailFocused(false);
+                          }}
                           onSubmitEditing={() => passwordRef.current?.focus()}
                           style={{
                             backgroundColor: '#F9FAFB',
@@ -159,13 +174,16 @@ export default function App() {
                             elevation: emailFocused ? 2 : 0
                           }}
                         />
-                      </View>
+                      </Pressable>
                     </View>
 
                     {/* Password Input */}
                     <View className="mb-6">
                       <Text className="text-black text-sm font-medium mb-2">Password</Text>
-                      <View className="relative">
+                      <Pressable 
+                        onPress={() => passwordRef.current?.focus()}
+                        style={{ position: 'relative' }}
+                      >
                         <TextInput
                           ref={passwordRef}
                           value={password}
@@ -176,8 +194,14 @@ export default function App() {
                           textContentType="password"
                           autoComplete="password"
                           returnKeyType="done"
-                          onFocus={() => setPasswordFocused(true)}
-                          onBlur={() => setPasswordFocused(false)}
+                          onFocus={() => {
+                            console.log('Password focused');
+                            setPasswordFocused(true);
+                          }}
+                          onBlur={() => {
+                            console.log('Password blurred');
+                            setPasswordFocused(false);
+                          }}
                           onSubmitEditing={isSignUp ? handleSignUp : handleSignIn}
                           style={{
                             backgroundColor: '#F9FAFB',
@@ -196,7 +220,7 @@ export default function App() {
                             elevation: passwordFocused ? 2 : 0
                           }}
                         />
-                      </View>
+                      </Pressable>
                     </View>
 
                     {/* Forgot Password */}
@@ -240,8 +264,8 @@ export default function App() {
                   </View>
                 </View>
               </View>
+            </Pressable>
             </ScrollView>
-          </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
       )}
     </>
