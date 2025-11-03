@@ -11,15 +11,29 @@ export default function App() {
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [isSignUp, setIsSignUp] = useState(false)
+  const [emailFocused, setEmailFocused] = useState(false)
+  const [passwordFocused, setPasswordFocused] = useState(false)
   
   // Refs for TextInputs to manage focus
   const emailRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
 
-  // Handle Sign In
+  // Email validation helper
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+    // Handle Sign In
   const handleSignIn = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert('Missing Information', 'Please fill in all fields');
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      Alert.alert('Invalid Email', 'Please enter a valid email address');
+      emailRef.current?.focus();
       return;
     }
 
@@ -27,7 +41,7 @@ export default function App() {
     const result = await signIn(email, password);
     
     if (result.success) {
-      Alert.alert('Success', 'Welcome back to Liga A+7!');
+      Alert.alert('Welcome!', 'Successfully signed in to Liga A+7!');
       // Navigate to main app here
     } else {
       Alert.alert('Sign In Failed', result.error);
@@ -38,12 +52,19 @@ export default function App() {
   // Handle Sign Up
   const handleSignUp = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert('Missing Information', 'Please fill in all fields');
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      Alert.alert('Invalid Email', 'Please enter a valid email address');
+      emailRef.current?.focus();
       return;
     }
 
     if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters');
+      Alert.alert('Weak Password', 'Password must be at least 6 characters long');
+      passwordRef.current?.focus();
       return;
     }
 
@@ -51,7 +72,7 @@ export default function App() {
     const result = await signUp(email, password);
     
     if (result.success) {
-      Alert.alert('Success', 'Account created successfully! Welcome to Liga A+7!'); //Creame un  Modal
+      Alert.alert('Success', 'Account created successfully! Welcome to Liga A+7!');
       // Navigate to main app here
     } else {
       Alert.alert('Sign Up Failed', result.error);
@@ -69,12 +90,15 @@ export default function App() {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           className="flex-1"
           keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+          style={{ flex: 1 }}
         >
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <ScrollView 
               contentContainerStyle={{ flexGrow: 1 }}
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={false}
+              bounces={false}
+              style={{ flex: 1 }}
             >
               <View className="flex-1 bg-white">
                 {/* Header Section */}
@@ -100,37 +124,79 @@ export default function App() {
                   <View className="w-full max-w-sm">
                     {/* Email Input */}
                     <View className="mb-4">
-                      <Text className="text-black text-sm font-medium mb-2">Email</Text>
-                      <TextInput
-                        ref={emailRef}
-                        value={email}
-                        onChangeText={setEmail}
-                        placeholder="Enter your email"
-                        placeholderTextColor="#9CA3AF"
-                        autoFocus
-                        autoCapitalize="none"
-                        keyboardType="email-address"
-                        autoComplete="email"
-                        returnKeyType="next"
-                        onSubmitEditing={() => passwordRef.current?.focus()}
-                        className="bg-gray-100 border border-gray-300 rounded-xl px-4 py-4 text-black text-base"
-                      />
+                      <Text className="text-black text-sm font-medium mb-2">Email Address</Text>
+                      <View className="relative">
+                        <TextInput
+                          ref={emailRef}
+                          value={email}
+                          onChangeText={(text) => setEmail(text.trim().toLowerCase())}
+                          placeholder="Enter your email address"
+                          placeholderTextColor="#9CA3AF"
+                          autoFocus={false}
+                          autoCapitalize="none"
+                          autoCorrect={false}
+                          keyboardType="email-address"
+                          textContentType="emailAddress"
+                          autoComplete="email"
+                          returnKeyType="next"
+                          onFocus={() => setEmailFocused(true)}
+                          onBlur={() => setEmailFocused(false)}
+                          onSubmitEditing={() => passwordRef.current?.focus()}
+                          style={{
+                            backgroundColor: '#F9FAFB',
+                            borderColor: emailFocused ? '#3B82F6' : (email ? '#10B981' : '#D1D5DB'),
+                            borderWidth: 2,
+                            borderRadius: 12,
+                            paddingHorizontal: 16,
+                            paddingVertical: 16,
+                            fontSize: 16,
+                            color: '#1F2937',
+                            fontWeight: '500',
+                            shadowColor: emailFocused ? '#3B82F6' : 'transparent',
+                            shadowOffset: { width: 0, height: 0 },
+                            shadowOpacity: 0.1,
+                            shadowRadius: 4,
+                            elevation: emailFocused ? 2 : 0
+                          }}
+                        />
+                      </View>
                     </View>
 
                     {/* Password Input */}
                     <View className="mb-6">
                       <Text className="text-black text-sm font-medium mb-2">Password</Text>
-                      <TextInput
-                        ref={passwordRef}
-                        value={password}
-                        onChangeText={setPassword}
-                        placeholder="Enter your password"
-                        placeholderTextColor="#9CA3AF"
-                        secureTextEntry={true}
-                        returnKeyType="done"
-                        onSubmitEditing={isSignUp ? handleSignUp : handleSignIn}
-                        className="bg-gray-100 border border-gray-300 rounded-xl px-4 py-4 text-black text-base"
-                      />
+                      <View className="relative">
+                        <TextInput
+                          ref={passwordRef}
+                          value={password}
+                          onChangeText={setPassword}
+                          placeholder="Enter your password"
+                          placeholderTextColor="#9CA3AF"
+                          secureTextEntry={true}
+                          textContentType="password"
+                          autoComplete="password"
+                          returnKeyType="done"
+                          onFocus={() => setPasswordFocused(true)}
+                          onBlur={() => setPasswordFocused(false)}
+                          onSubmitEditing={isSignUp ? handleSignUp : handleSignIn}
+                          style={{
+                            backgroundColor: '#F9FAFB',
+                            borderColor: passwordFocused ? '#3B82F6' : (password ? '#10B981' : '#D1D5DB'),
+                            borderWidth: 2,
+                            borderRadius: 12,
+                            paddingHorizontal: 16,
+                            paddingVertical: 16,
+                            fontSize: 16,
+                            color: '#1F2937',
+                            fontWeight: '500',
+                            shadowColor: passwordFocused ? '#3B82F6' : 'transparent',
+                            shadowOffset: { width: 0, height: 0 },
+                            shadowOpacity: 0.1,
+                            shadowRadius: 4,
+                            elevation: passwordFocused ? 2 : 0
+                          }}
+                        />
+                      </View>
                     </View>
 
                     {/* Forgot Password */}
