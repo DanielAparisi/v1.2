@@ -57,7 +57,7 @@ export default function App() {
 
   return (
     <>
-      <StatusBar style='light' />
+      <StatusBar style='dark' />
       {loading ? (
         <SoccerLoadingScreen message={isSignUp ? 'Creating your account...' : 'Signing you in...'} />
       ) : (

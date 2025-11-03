@@ -45,18 +45,7 @@ export const signIn = async (email, password) => {
 };
 
 // Sign in anonymously
-export const signInAnonymous = async () => {
-  try {
-    const userCredential = await signInAnonymously(auth);
-    const user = userCredential.user;
-    
-    console.log('Anonymous sign in successful:', user.uid);
-    return { success: true, user };
-  } catch (error) {
-    console.error('Anonymous sign in error:', error.message);
-    return { success: false, error: error.message };
-  }
-};
+
 
 // Sign out
 export const logOut = async () => {
