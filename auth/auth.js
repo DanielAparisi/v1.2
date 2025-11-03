@@ -44,9 +44,6 @@ export const signIn = async (email, password) => {
   }
 };
 
-// Sign in anonymously
-
-
 // Sign out
 export const logOut = async () => {
   try {
