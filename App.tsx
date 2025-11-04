@@ -6,7 +6,7 @@ import { signIn, signUp } from './auth/auth';
 import SoccerSpinner from './components/SoccerSpinner';
 import SoccerLoadingScreen from './components/SoccerLoadingScreen';
 import SuccessModal from './components/SuccessModal';
-
+import { Link } from 'expo-router';
 export default function App() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
