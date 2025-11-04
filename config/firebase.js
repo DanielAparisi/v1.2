@@ -1,7 +1,8 @@
 import { initializeApp } from 'firebase/app';
 import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+
+import { getFirestore } from 'firebase/firestore';
 import Constants from 'expo-constants';
 
 // Firebase config - Using fallback approach for compatibility
@@ -48,8 +49,9 @@ if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
 }
 
 // initialize firebase
+let app;
 try {
-  const app = initializeApp(firebaseConfig);
+  app = initializeApp(firebaseConfig);
   console.log('Firebase initialized successfully');
 } catch (error) {
   console.error('Firebase initialization error:', error);
@@ -58,5 +60,5 @@ try {
 
 export const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
-});
+}); 
 export const database = getFirestore();
