@@ -212,7 +212,7 @@ export default function App() {
                             setEmail(cleanEmail);
                             validateEmail(cleanEmail);
                           }}
-                          placeholder="Enter your email address (@gmail.com)"
+                          placeholder="Enter your email address"
                           placeholderTextColor="#9CA3AF"
                           autoCapitalize="none"
                           autoCorrect={false}
@@ -269,7 +269,7 @@ export default function App() {
                             setPassword(text);
                             validatePassword(text);
                           }}
-                          placeholder="Enter your password (min. 6 characters)"
+                          placeholder="Enter your password "
                           placeholderTextColor="#9CA3AF"
                           secureTextEntry={true}
                           textContentType="password"
