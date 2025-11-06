@@ -7,7 +7,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "scheme" : "googlemaps",
+    "scheme": "googlemaps",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -41,7 +41,8 @@
       "databaseURL": "https://project2-471c1-default-rtdb.europe-west1.firebasedatabase.app/"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-font"
     ]
   }
 }
