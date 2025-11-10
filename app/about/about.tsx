@@ -1,4 +1,10 @@
-export default function About () {
+import { View,Text } from "react-native";
 
+export default function About () {
+return(
+    <View>
+        <Text>Hola</Text>
+    </View>
+)
     
 }

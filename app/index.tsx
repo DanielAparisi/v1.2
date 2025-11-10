@@ -1,14 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
 import { Pressable, Text, View, TextInput, KeyboardAvoidingView, Platform, ScrollView, Image, Alert, Keyboard } from 'react-native';
-import "./global.css"
+import "../global.css"
 import { useState, useRef } from 'react';
-import { signIn, signUp } from './auth/auth';
-import SoccerSpinner from './components/SoccerSpinner';
-import SoccerLoadingScreen from './components/SoccerLoadingScreen';
-import SuccessModal from './components/SuccessModal';
+import { signIn, signUp } from '../auth/auth';
+import SoccerSpinner from '../components/SoccerSpinner';
+import SoccerLoadingScreen from '../components/SoccerLoadingScreen';
+import SuccessModal from '../components/SuccessModal';
 import { Link } from 'expo-router';
 
-export default function App() {
+export default function HomeScreen() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
@@ -179,7 +179,7 @@ export default function App() {
                     {/* Logo/Icon */}
                     <View className="w-24 h-24 items-center justify-center mb-8">
                       <Image 
-                        source={require('./assets/logoliga.webp')} 
+                        source={require('../assets/logoliga.webp')} 
                         className="w-full h-full"
                         resizeMode="contain"
                       />
@@ -348,6 +348,17 @@ export default function App() {
                           {isSignUp ? 'Sign In' : 'Sign Up'}
                         </Text>
                       </Pressable>
+                    </View>
+
+                    {/* Navigation Link for Testing */}
+                    <View className="mt-8">
+                      <Link href="/about" asChild>
+                        <Pressable className="bg-gray-200 rounded-xl py-3 items-center">
+                          <Text className="text-gray-800 text-sm font-medium">
+                            Go to About (Test Navigation)
+                          </Text>
+                        </Pressable>
+                      </Link>
                     </View>
                   </View>
                 </View>
