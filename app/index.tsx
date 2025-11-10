@@ -6,8 +6,9 @@ import { signIn, signUp } from '../auth/auth';
 import SoccerSpinner from '../components/SoccerSpinner';
 import SoccerLoadingScreen from '../components/SoccerLoadingScreen';
 import SuccessModal from '../components/SuccessModal';
-import { Link } from 'expo-router';
-
+import { Link, router } from 'expo-router';
+import AuthGuard from '../components/AuthGuard';
+// ESTO ES EL LOGIN
 export default function HomeScreen() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -107,7 +108,11 @@ export default function HomeScreen() {
       setModalTitle('¡Bienvenido!')
       setModalMessage('Has iniciado sesión exitosamente en Liga A+7. ¡Prepárate para jugar!')
       setShowSuccessModal(true)
-      // Navigate to main app here
+      
+      // Navigate to dashboard after short delay
+      setTimeout(() => {
+        router.replace('/dashboard');
+      }, 2000);
     } else {
       Alert.alert('Error de Inicio de Sesión', result.error);
     }
@@ -142,7 +147,11 @@ export default function HomeScreen() {
       setModalTitle('¡Cuenta Creada!')
       setModalMessage('Tu cuenta ha sido creada exitosamente. ¡Bienvenido a Liga A+7!')
       setShowSuccessModal(true)
-      // Navigate to main app here
+      
+      // Navigate to dashboard after short delay
+      setTimeout(() => {
+        router.replace('/dashboard');
+      }, 2000);
     } else {
       Alert.alert('Error al Crear Cuenta', result.error);
     }
@@ -150,7 +159,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <>
+    <AuthGuard>
       <StatusBar style='dark' />
       {loading ? (
         <SoccerLoadingScreen message={isSignUp ? 'Creating your account...' : 'Signing you in...'} />
@@ -349,17 +358,6 @@ export default function HomeScreen() {
                         </Text>
                       </Pressable>
                     </View>
-
-                    {/* Navigation Link for Testing */}
-                    <View className="mt-8">
-                      <Link href="/about" asChild>
-                        <Pressable className="bg-gray-200 rounded-xl py-3 items-center">
-                          <Text className="text-gray-800 text-sm font-medium">
-                            Go to About (Test Navigation)
-                          </Text>
-                        </Pressable>
-                      </Link>
-                    </View>
                   </View>
                 </View>
               </View>
@@ -375,6 +373,6 @@ export default function HomeScreen() {
         message={modalMessage}
         onClose={() => setShowSuccessModal(false)}
       />
-    </>
+    </AuthGuard>
   );
 }

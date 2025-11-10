@@ -9,6 +9,12 @@ export default function AboutScreen() {
         Welcome to Liga A+7, the premier soccer league management app.
       </Text>
       
+      <Link href="/dashboard" asChild>
+        <Text className="text-blue-600 text-base font-semibold underline mb-4">
+          Go to Dashboard
+        </Text>
+      </Link>
+      
       <Link href="/" asChild>
         <Text className="text-blue-600 text-base font-semibold underline">
           ← Back to Login
