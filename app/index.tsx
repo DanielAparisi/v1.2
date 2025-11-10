@@ -65,19 +65,19 @@ export default function HomeScreen() {
     }
   };
 
-  // Get border color based on focus and validation state
-  const getEmailBorderColor = () => {
-    if (emailError) return '#EF4444'; // Red for error
-    if (emailFocused) return '#3B82F6'; // Blue for focus
-    if (email && !emailError) return '#10B981'; // Green for valid
-    return '#D1D5DB'; // Gray for default
+  // Get border classes based on focus and validation state
+  const getEmailBorderClass = () => {
+    if (emailError) return 'border-red-500';
+    if (emailFocused) return 'border-blue-500';
+    if (email && !emailError) return 'border-green-500';
+    return 'border-gray-300';
   };
 
-  const getPasswordBorderColor = () => {
-    if (passwordError) return '#EF4444'; // Red for error
-    if (passwordFocused) return '#3B82F6'; // Blue for focus
-    if (password && !passwordError) return '#10B981'; // Green for valid
-    return '#D1D5DB'; // Gray for default
+  const getPasswordBorderClass = () => {
+    if (passwordError) return 'border-red-500';
+    if (passwordFocused) return 'border-blue-500';
+    if (password && !passwordError) return 'border-green-500';
+    return 'border-gray-300';
   };
 
         // Handle Sign In
@@ -168,18 +168,17 @@ export default function HomeScreen() {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           className="flex-1"
           keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-          style={{ flex: 1 }}
         >
           <ScrollView 
             contentContainerStyle={{ flexGrow: 1 }}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
             bounces={false}
-            style={{ flex: 1 }}
+            className="flex-1"
           >
             <Pressable 
               onPress={Keyboard.dismiss} 
-              style={{ flex: 1 }}
+              className="flex-1"
             >
               <View className="flex-1 bg-white">
                 {/* Header Section */}
@@ -212,7 +211,7 @@ export default function HomeScreen() {
                       <Text className="text-black text-sm font-medium mb-2">Email Address</Text>
                       <Pressable 
                         onPress={() => emailRef.current?.focus()}
-                        style={{ position: 'relative' }}
+                        className="relative"
                       >
                         <TextInput
                           ref={emailRef}
@@ -240,22 +239,7 @@ export default function HomeScreen() {
                             validateEmail(email);
                           }}
                           onSubmitEditing={() => passwordRef.current?.focus()}
-                          style={{
-                            backgroundColor: '#F9FAFB',
-                            borderColor: getEmailBorderColor(),
-                            borderWidth: 2,
-                            borderRadius: 12,
-                            paddingHorizontal: 16,
-                            paddingVertical: 16,
-                            fontSize: 16,
-                            color: '#1F2937',
-                            fontWeight: '500',
-                            shadowColor: emailFocused ? '#3B82F6' : (emailError ? '#EF4444' : 'transparent'),
-                            shadowOffset: { width: 0, height: 0 },
-                            shadowOpacity: 0.1,
-                            shadowRadius: 4,
-                            elevation: emailFocused || emailError ? 2 : 0
-                          }}
+                          className={`bg-gray-50 ${getEmailBorderClass()} border-2 rounded-xl px-4 py-4 text-base text-gray-800 font-medium ${emailFocused || emailError ? 'shadow-sm' : ''}`}
                         />
                       </Pressable>
                       {emailError && email.length > 0 && (
@@ -270,7 +254,7 @@ export default function HomeScreen() {
                       <Text className="text-black text-sm font-medium mb-2">Password</Text>
                       <Pressable 
                         onPress={() => passwordRef.current?.focus()}
-                        style={{ position: 'relative' }}
+                        className="relative"
                       >
                         <TextInput
                           ref={passwordRef}
@@ -295,22 +279,7 @@ export default function HomeScreen() {
                             validatePassword(password);
                           }}
                           onSubmitEditing={isSignUp ? handleSignUp : handleSignIn}
-                          style={{
-                            backgroundColor: '#F9FAFB',
-                            borderColor: getPasswordBorderColor(),
-                            borderWidth: 2,
-                            borderRadius: 12,
-                            paddingHorizontal: 16,
-                            paddingVertical: 16,
-                            fontSize: 16,
-                            color: '#1F2937',
-                            fontWeight: '500',
-                            shadowColor: passwordFocused ? '#3B82F6' : (passwordError ? '#EF4444' : 'transparent'),
-                            shadowOffset: { width: 0, height: 0 },
-                            shadowOpacity: 0.1,
-                            shadowRadius: 4,
-                            elevation: passwordFocused || passwordError ? 2 : 0
-                          }}
+                          className={`bg-gray-50 ${getPasswordBorderClass()} border-2 rounded-xl px-4 py-4 text-base text-gray-800 font-medium ${passwordFocused || passwordError ? 'shadow-sm' : ''}`}
                         />
                       </Pressable>
                       {passwordError && password.length > 0 && (
