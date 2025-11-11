@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, Pressable } from 'react-native';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useUser } from '../contexts/UserContext';
 import { UserRole, ROLE_DISPLAY_NAMES, ROLE_ICONS } from '../types/user';
 import PermissionWrapper, { PlayerOnly, RefereeOnly, AdminOnly, StaffOnly } from '../components/PermissionWrapper';
@@ -8,6 +8,7 @@ import RoleSelector from '../components/RoleSelector';
 import AuthGuard from '../components/AuthGuard';
 
 export default function DashboardScreen() {
+  const router = useRouter();
   const { user, hasPermission, setUser, signOut } = useUser();
   const [showRoleSelector, setShowRoleSelector] = useState(false);
 

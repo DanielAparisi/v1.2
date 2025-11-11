@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useUser } from '../contexts/UserContext';
 
 interface AuthGuardProps {
@@ -13,6 +13,7 @@ export default function AuthGuard({
   redirectTo = '/dashboard', 
   requireAuth = false 
 }: AuthGuardProps) {
+  const router = useRouter();
   const { user, loading } = useUser();
 
   useEffect(() => {

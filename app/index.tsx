@@ -6,10 +6,11 @@ import { signIn, signUp } from '../auth/auth';
 import SoccerSpinner from '../components/SoccerSpinner';
 import SoccerLoadingScreen from '../components/SoccerLoadingScreen';
 import SuccessModal from '../components/SuccessModal';
-import { Link, router } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import AuthGuard from '../components/AuthGuard';
 // ESTO ES EL LOGIN QUE SEERA LA RAIZ DE LA APP
 export default function HomeScreen() {
+  const router = useRouter();
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
