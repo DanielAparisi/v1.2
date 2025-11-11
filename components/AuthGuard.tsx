@@ -1,45 +1,29 @@
-import { useEffect } from 'react';
-import { useRouter } from 'expo-router';
 import { useUser } from '../contexts/UserContext';
 
 interface AuthGuardProps {
   children: React.ReactNode;
-  redirectTo?: string;
   requireAuth?: boolean;
 }
 
 export default function AuthGuard({ 
   children, 
-  redirectTo = '/dashboard', 
   requireAuth = false 
 }: AuthGuardProps) {
-  const router = useRouter();
   const { user, loading } = useUser();
-
-  useEffect(() => {
-    if (!loading) {
-      if (requireAuth && !user) {
-        // User is not authenticated but auth is required
-        router.replace('/');
-      } else if (!requireAuth && user) {
-        // User is authenticated but on a public page
-        router.replace(redirectTo);
-      }
-    }
-  }, [user, loading, requireAuth, redirectTo]);
 
   // Show loading while checking auth state
   if (loading) {
     return null; // or a loading spinner
   }
 
-  // If user should be redirected, don't render children
+  // If auth is required but user is not authenticated
   if (requireAuth && !user) {
-    return null;
+    return null; // Don't render children, let parent handle redirect
   }
 
+  // If auth is NOT required but user is authenticated
   if (!requireAuth && user) {
-    return null;
+    return null; // Don't render children, let parent handle redirect
   }
 
   return <>{children}</>;

@@ -1,19 +1,21 @@
 import { StatusBar } from 'expo-status-bar';
-import { Pressable, Text, View, TextInput, KeyboardAvoidingView, Platform, ScrollView, Image, Alert, Keyboard } from 'react-native';
+import { Pressable, Text, View, TextInput, KeyboardAvoidingView, Platform, ScrollView, Image, Alert, Keyboard, StyleSheet } from 'react-native';
 import "../global.css"
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { signIn, signUp } from '../auth/auth';
 import SoccerSpinner from '../components/SoccerSpinner';
 import SoccerLoadingScreen from '../components/SoccerLoadingScreen';
 import SuccessModal from '../components/SuccessModal';
 import { Link, useRouter } from 'expo-router';
 import AuthGuard from '../components/AuthGuard';
+import { useUser } from '../contexts/UserContext';
 // ESTO ES EL LOGIN QUE SEERA LA RAIZ DE LA APP
 export default function HomeScreen() {
   const router = useRouter();
+  const { user, loading } = useUser();
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [authLoading, setAuthLoading] = useState(false)
   const [isSignUp, setIsSignUp] = useState(false)
   const [emailFocused, setEmailFocused] = useState(false)
   const [passwordFocused, setPasswordFocused] = useState(false)
@@ -30,6 +32,23 @@ export default function HomeScreen() {
   // Refs for TextInputs to manage focus
   const emailRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
+
+  // Handle navigation for authenticated users
+  useEffect(() => {
+    if (!loading && user) {
+      router.replace('/dashboard');
+    }
+  }, [user, loading]);
+
+  // Show loading while checking auth state
+  if (loading) {
+    return <SoccerLoadingScreen message="Verificando autenticación..." />;
+  }
+
+  // Don't render if user is authenticated (will redirect)
+  if (user) {
+    return null;
+  }
 
   // Email validation helper
   const isValidEmail = (email: string) => {
@@ -66,19 +85,35 @@ export default function HomeScreen() {
     }
   };
 
-  // Get border classes based on focus and validation state
-  const getEmailBorderClass = () => {
-    if (emailError) return 'border-red-500';
-    if (emailFocused) return 'border-blue-500';
-    if (email && !emailError) return 'border-green-500';
-    return 'border-gray-300';
+  // Get border styles based on focus and validation state
+  const getEmailBorderStyle = () => {
+    const baseStyles = [inputStyles.base, inputStyles.borderDefault];
+    
+    if (emailError) {
+      return [inputStyles.base, inputStyles.borderError];
+    }
+    if (emailFocused) {
+      return [inputStyles.base, inputStyles.borderFocused];
+    }
+    if (email && !emailError) {
+      return [inputStyles.base, inputStyles.borderSuccess];
+    }
+    return baseStyles;
   };
 
-  const getPasswordBorderClass = () => {
-    if (passwordError) return 'border-red-500';
-    if (passwordFocused) return 'border-blue-500';
-    if (password && !passwordError) return 'border-green-500';
-    return 'border-gray-300';
+  const getPasswordBorderStyle = () => {
+    const baseStyles = [inputStyles.base, inputStyles.borderDefault];
+    
+    if (passwordError) {
+      return [inputStyles.base, inputStyles.borderError];
+    }
+    if (passwordFocused) {
+      return [inputStyles.base, inputStyles.borderFocused];
+    }
+    if (password && !passwordError) {
+      return [inputStyles.base, inputStyles.borderSuccess];
+    }
+    return baseStyles;
   };
 
         // Handle Sign In
@@ -102,7 +137,7 @@ export default function HomeScreen() {
       return;
     }
 
-    setLoading(true);
+    setAuthLoading(true);
     const result = await signIn(email, password);
     
     if (result.success) {
@@ -117,7 +152,7 @@ export default function HomeScreen() {
     } else {
       Alert.alert('Error de Inicio de Sesión', result.error);
     }
-    setLoading(false);
+    setAuthLoading(false);
   };
 
   // Handle Sign Up
@@ -141,7 +176,7 @@ export default function HomeScreen() {
       return;
     }
 
-    setLoading(true);
+    setAuthLoading(true);
     const result = await signUp(email, password);
     
     if (result.success) {
@@ -156,13 +191,13 @@ export default function HomeScreen() {
     } else {
       Alert.alert('Error al Crear Cuenta', result.error);
     }
-    setLoading(false);
+    setAuthLoading(false);
   };
 
   return (
-    <AuthGuard>
+    <>
       <StatusBar style='dark' />
-      {loading ? (
+      {authLoading ? (
         <SoccerLoadingScreen message={isSignUp ? 'Creating your account...' : 'Signing you in...'} />
       ) : (
         <KeyboardAvoidingView
@@ -240,7 +275,7 @@ export default function HomeScreen() {
                             validateEmail(email);
                           }}
                           onSubmitEditing={() => passwordRef.current?.focus()}
-                          className={`bg-gray-50 ${getEmailBorderClass()} border-2 rounded-xl px-4 py-4 text-base text-gray-800 font-medium ${emailFocused || emailError ? 'shadow-sm' : ''}`}
+                          style={getEmailBorderStyle()}
                         />
                       </Pressable>
                       {emailError && email.length > 0 && (
@@ -280,7 +315,7 @@ export default function HomeScreen() {
                             validatePassword(password);
                           }}
                           onSubmitEditing={isSignUp ? handleSignUp : handleSignIn}
-                          className={`bg-gray-50 ${getPasswordBorderClass()} border-2 rounded-xl px-4 py-4 text-base text-gray-800 font-medium ${passwordFocused || passwordError ? 'shadow-sm' : ''}`}
+                          style={getPasswordBorderStyle()}
                         />
                       </Pressable>
                       {passwordError && password.length > 0 && (
@@ -300,10 +335,10 @@ export default function HomeScreen() {
                     {/* Sign In/Up Button */}
                     <Pressable 
                       onPress={isSignUp ? handleSignUp : handleSignIn}
-                      disabled={loading}
-                      className={`bg-blue-600 rounded-xl py-4 items-center mb-4 ${loading ? 'opacity-70' : ''}`}
+                      disabled={authLoading}
+                      className={`bg-blue-600 rounded-xl py-4 items-center mb-4 ${authLoading ? 'opacity-70' : ''}`}
                     >
-                      {loading ? (
+                      {authLoading ? (
                         <View className="flex-row items-center">
                           <SoccerSpinner size={20} color="#FFFFFF" />
                           <Text className="text-white text-base font-semibold ml-2">
@@ -343,6 +378,40 @@ export default function HomeScreen() {
         message={modalMessage}
         onClose={() => setShowSuccessModal(false)}
       />
-    </AuthGuard>
+    </>
   );
 }
+
+// Styles for dynamic input borders to avoid NativeWind conflicts
+const inputStyles = StyleSheet.create({
+  base: {
+    backgroundColor: '#f9fafb', // bg-gray-50
+    borderWidth: 2,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    fontSize: 16,
+    color: '#1f2937', // text-gray-800
+    fontWeight: '500',
+  },
+  borderDefault: {
+    borderColor: '#d1d5db', // border-gray-300
+  },
+  borderFocused: {
+    borderColor: '#3b82f6', // border-blue-500
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
+  },
+  borderError: {
+    borderColor: '#ef4444', // border-red-500
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
+  },
+  borderSuccess: {
+    borderColor: '#10b981', // border-green-500
+  },
+});

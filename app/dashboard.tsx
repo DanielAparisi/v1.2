@@ -1,282 +1,192 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, Pressable } from 'react-native';
-import { useRouter } from 'expo-router';
+import React from 'react';
+import { View, Text, Pressable, ScrollView, SafeAreaView } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { useUser } from '../contexts/UserContext';
-import { UserRole, ROLE_DISPLAY_NAMES, ROLE_ICONS } from '../types/user';
-import PermissionWrapper, { PlayerOnly, RefereeOnly, AdminOnly, StaffOnly } from '../components/PermissionWrapper';
-import RoleSelector from '../components/RoleSelector';
 import AuthGuard from '../components/AuthGuard';
+import { useRouter } from 'expo-router';
 
-export default function DashboardScreen() {
+export default function Dashboard() {
+  const { user, signOut, hasPermission, isRole } = useUser();
   const router = useRouter();
-  const { user, hasPermission, setUser, signOut } = useUser();
-  const [showRoleSelector, setShowRoleSelector] = useState(false);
 
-  if (!user) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-        <Text style={{ fontSize: 18, color: '#6B7280' }}>
-          Por favor inicia sesión para continuar
-        </Text>
-      </View>
-    );
-  }
-
-  const handleRoleChange = (role: UserRole) => {
-    // In a real app, you would update this in your database
-    setUser({ ...user, role });
-    setShowRoleSelector(false);
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.replace('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
   };
 
-  if (showRoleSelector) {
-    return (
-      <View style={{ flex: 1, backgroundColor: 'white', paddingTop: 60 }}>
-        <RoleSelector
-          selectedRole={user.role}
-          onRoleSelect={handleRoleChange}
-        />
-        <Pressable
-          onPress={() => setShowRoleSelector(false)}
-          style={{
-            margin: 20,
-            padding: 16,
-            backgroundColor: '#F3F4F6',
-            borderRadius: 12,
-            alignItems: 'center'
-          }}
-        >
-          <Text style={{ color: '#6B7280', fontWeight: '500' }}>Cancelar</Text>
-        </Pressable>
-      </View>
-    );
-  }
-
   return (
-    <AuthGuard requireAuth>
-      <ScrollView style={{ flex: 1, backgroundColor: 'white' }}>
-      {/* User Info Header */}
-      <View style={{ 
-        backgroundColor: '#F3F4F6', 
-        padding: 20, 
-        paddingTop: 60,
-        alignItems: 'center' 
-      }}>
-        <Text style={{ fontSize: 32, marginBottom: 8 }}>
-          {ROLE_ICONS[user.role]}
-        </Text>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1F2937' }}>
-          {user.name}
-        </Text>
-        <Text style={{ fontSize: 16, color: '#6B7280', marginBottom: 16 }}>
-          {ROLE_DISPLAY_NAMES[user.role]}
-        </Text>
+    <AuthGuard requireAuth={true}>
+      <SafeAreaView className="flex-1 bg-white">
+        <StatusBar style="dark" />
         
-        <View style={{ flexDirection: 'row', gap: 12, marginBottom: 8 }}>
-          <Pressable
-            onPress={() => setShowRoleSelector(true)}
-            style={{
-              backgroundColor: '#3B82F6',
-              paddingHorizontal: 16,
-              paddingVertical: 8,
-              borderRadius: 20
-            }}
-          >
-            <Text style={{ color: 'white', fontSize: 14, fontWeight: '500' }}>
-              Cambiar Rol
+        <ScrollView className="flex-1 px-6">
+          {/* Header */}
+          <View className="py-8 border-b border-gray-200">
+            <Text className="text-3xl font-bold text-gray-900 mb-2">
+              ¡Bienvenido a Liga A+7!
             </Text>
-          </Pressable>
-          
-          <Pressable
-            onPress={() => {
-              signOut().then(() => {
-                router.replace('/');
-              });
-            }}
-            style={{
-              backgroundColor: '#EF4444',
-              paddingHorizontal: 16,
-              paddingVertical: 8,
-              borderRadius: 20
-            }}
-          >
-            <Text style={{ color: 'white', fontSize: 14, fontWeight: '500' }}>
-              Cerrar Sesión
-            </Text>
-          </Pressable>
-        </View>
-      </View>
-
-      <View style={{ padding: 20 }}>
-        {/* General Content - Everyone can see */}
-        <View style={{ 
-          backgroundColor: '#F9FAFB', 
-          padding: 16, 
-          borderRadius: 12, 
-          marginBottom: 20 
-        }}>
-          <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8 }}>
-            📊 Contenido General
-          </Text>
-          <Text style={{ color: '#6B7280' }}>
-            Este contenido es visible para todos los usuarios autenticados
-          </Text>
-        </View>
-
-        {/* Player-only content */}
-        <PlayerOnly>
-          <View style={{ 
-            backgroundColor: '#EBF4FF', 
-            padding: 16, 
-            borderRadius: 12, 
-            marginBottom: 20,
-            borderLeftWidth: 4,
-            borderLeftColor: '#3B82F6'
-          }}>
-            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8, color: '#1E40AF' }}>
-              👤 Panel del Jugador
-            </Text>
-            <Text style={{ color: '#1E40AF' }}>
-              • Ver mis estadísticas
-            </Text>
-            <Text style={{ color: '#1E40AF' }}>
-              • Próximos partidos
-            </Text>
-            <Text style={{ color: '#1E40AF' }}>
-              • Mi equipo
+            <Text className="text-gray-600 text-lg">
+              Hola { user?.email?.split('@')[0]}
             </Text>
           </View>
-        </PlayerOnly>
 
-        {/* Referee-only content */}
-        <RefereeOnly>
-          <View style={{ 
-            backgroundColor: '#ECFDF5', 
-            padding: 16, 
-            borderRadius: 12, 
-            marginBottom: 20,
-            borderLeftWidth: 4,
-            borderLeftColor: '#10B981'
-          }}>
-            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8, color: '#047857' }}>
-              ⚽ Panel del Árbitro
+          {/* User Info Section */}
+          <View className="py-6">
+            <Text className="text-xl font-semibold text-gray-900 mb-4">
+              Tu Información
             </Text>
-            <Text style={{ color: '#047857' }}>
-              • Partidos asignados
-            </Text>
-            <Text style={{ color: '#047857' }}>
-              • Completar actas
-            </Text>
-            <Text style={{ color: '#047857' }}>
-              • Reportar incidencias
-            </Text>
-          </View>
-        </RefereeOnly>
-
-        {/* Staff-only content (Referee + Admin + Delegate) */}
-        <StaffOnly>
-          <View style={{ 
-            backgroundColor: '#FEF3C7', 
-            padding: 16, 
-            borderRadius: 12, 
-            marginBottom: 20,
-            borderLeftWidth: 4,
-            borderLeftColor: '#F59E0B'
-          }}>
-            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8, color: '#92400E' }}>
-              🏟️ Panel de Staff
-            </Text>
-            <Text style={{ color: '#92400E' }}>
-              • Gestión de partidos
-            </Text>
-            <Text style={{ color: '#92400E' }}>
-              • Administración de equipos
-            </Text>
-          </View>
-        </StaffOnly>
-
-        {/* Admin-only content */}
-        <AdminOnly>
-          <View style={{ 
-            backgroundColor: '#F3E8FF', 
-            padding: 16, 
-            borderRadius: 12, 
-            marginBottom: 20,
-            borderLeftWidth: 4,
-            borderLeftColor: '#7C3AED'
-          }}>
-            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8, color: '#5B21B6' }}>
-              👑 Panel de Administrador
-            </Text>
-            <Text style={{ color: '#5B21B6' }}>
-              • Gestión de usuarios
-            </Text>
-            <Text style={{ color: '#5B21B6' }}>
-              • Configuración del sistema
-            </Text>
-            <Text style={{ color: '#5B21B6' }}>
-              • Análisis completo
-            </Text>
-          </View>
-        </AdminOnly>
-
-        {/* Permission-based content */}
-        <PermissionWrapper permission="canManageTeams" showFallback>
-          <View style={{ 
-            backgroundColor: '#FDF2F8', 
-            padding: 16, 
-            borderRadius: 12, 
-            marginBottom: 20,
-            borderLeftWidth: 4,
-            borderLeftColor: '#EC4899'
-          }}>
-            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8, color: '#BE185D' }}>
-              🔧 Gestión de Equipos
-            </Text>
-            <Text style={{ color: '#BE185D' }}>
-              Solo usuarios con permiso "canManageTeams" pueden ver esto
-            </Text>
-          </View>
-        </PermissionWrapper>
-
-        {/* Permissions Summary */}
-        <View style={{ 
-          backgroundColor: '#F9FAFB', 
-          padding: 16, 
-          borderRadius: 12, 
-          marginBottom: 20 
-        }}>
-          <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 12 }}>
-            🔐 Tus Permisos
-          </Text>
-          {[
-            'canViewMatches',
-            'canEditMatches',
-            'canManageTeams',
-            'canManagePlayers',
-            'canViewStats',
-            'canReportIncidents',
-            'canManageLeagues'
-          ].map((permission) => (
-            <View key={permission} style={{ 
-              flexDirection: 'row', 
-              justifyContent: 'space-between', 
-              alignItems: 'center',
-              paddingVertical: 4
-            }}>
-              <Text style={{ color: '#374151', fontSize: 14 }}>
-                {permission}
-              </Text>
-              <Text style={{ 
-                color: hasPermission(permission as any) ? '#059669' : '#DC2626',
-                fontWeight: '500'
-              }}>
-                {hasPermission(permission as any) ? '✅' : '❌'}
-              </Text>
+            
+            <View className="bg-gray-50 rounded-xl p-4 mb-4">
+              <View className="flex-row justify-between items-center mb-2">
+                <Text className="text-sm font-medium text-gray-600">Email:</Text>
+                <Text className="text-sm text-gray-900">{user?.email}</Text>
+              </View>
+              
+              <View className="flex-row justify-between items-center mb-2">
+                <Text className="text-sm font-medium text-gray-600">Rol:</Text>
+                <Text className="text-sm text-gray-900 capitalize">{user?.role}</Text>
+              </View>
+              
+              <View className="flex-row justify-between items-center">
+                <Text className="text-sm font-medium text-gray-600">ID:</Text>
+                <Text className="text-xs text-gray-500">{user?.id?.substring(0, 8)}...</Text>
+              </View>
             </View>
-          ))}
-        </View>
-      </View>
-    </ScrollView>
+          </View>
+
+          {/* Permissions Section */}
+          <View className="py-6">
+            <Text className="text-xl font-semibold text-gray-900 mb-4">
+              Permisos y Accesos
+            </Text>
+            
+            <View className="space-y-3">
+              <View className="flex-row items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <Text className="text-sm text-gray-700">Ver partidos</Text>
+                <View className={`w-4 h-4 rounded-full ${hasPermission('canViewMatches') ? 'bg-green-500' : 'bg-red-500'}`} />
+              </View>
+              
+              <View className="flex-row items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <Text className="text-sm text-gray-700">Editar partidos</Text>
+                <View className={`w-4 h-4 rounded-full ${hasPermission('canEditMatches') ? 'bg-green-500' : 'bg-red-500'}`} />
+              </View>
+              
+              <View className="flex-row items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <Text className="text-sm text-gray-700">Gestionar equipos</Text>
+                <View className={`w-4 h-4 rounded-full ${hasPermission('canManageTeams') ? 'bg-green-500' : 'bg-red-500'}`} />
+              </View>
+              
+              <View className="flex-row items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <Text className="text-sm text-gray-700">Ver estadísticas</Text>
+                <View className={`w-4 h-4 rounded-full ${hasPermission('canViewStats') ? 'bg-green-500' : 'bg-red-500'}`} />
+              </View>
+              
+              <View className="flex-row items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <Text className="text-sm text-gray-700">Gestionar ligas</Text>
+                <View className={`w-4 h-4 rounded-full ${hasPermission('canManageLeagues') ? 'bg-green-500' : 'bg-red-500'}`} />
+              </View>
+            </View>
+          </View>
+
+          {/* Role-specific Content */}
+          <View className="py-6">
+            <Text className="text-xl font-semibold text-gray-900 mb-4">
+              Panel de {user?.role === 'admin' ? 'Administrador' : 
+                       user?.role === 'delegado' ? 'Delegado' : 
+                       user?.role === 'arbitro' ? 'Árbitro' :
+                       user?.role === 'espectador' ? 'Espectador' : 'Jugador'}
+            </Text>
+            
+            {isRole('admin') && (
+              <View className="p-4 bg-red-50 border border-red-200 rounded-xl">
+                <Text className="text-red-800 font-medium mb-2">Panel de Administrador</Text>
+                <Text className="text-red-700 text-sm">
+                  Tienes acceso completo a todas las funciones del sistema.
+                </Text>
+              </View>
+            )}
+            
+            {isRole('delegado') && (
+              <View className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                <Text className="text-blue-800 font-medium mb-2">Panel de Delegado</Text>
+                <Text className="text-blue-700 text-sm">
+                  Puedes gestionar equipos y partidos en tu liga.
+                </Text>
+              </View>
+            )}
+            
+            {isRole('arbitro') && (
+              <View className="p-4 bg-orange-50 border border-orange-200 rounded-xl">
+                <Text className="text-orange-800 font-medium mb-2">Panel de Árbitro</Text>
+                <Text className="text-orange-700 text-sm">
+                  Puedes arbitrar partidos y reportar incidentes.
+                </Text>
+              </View>
+            )}
+            
+            {isRole('jugador') && (
+              <View className="p-4 bg-green-50 border border-green-200 rounded-xl">
+                <Text className="text-green-800 font-medium mb-2">Panel de Jugador</Text>
+                <Text className="text-green-700 text-sm">
+                  Puedes ver partidos y estadísticas de tu equipo.
+                </Text>
+              </View>
+            )}
+
+            {isRole('espectador') && (
+              <View className="p-4 bg-purple-50 border border-purple-200 rounded-xl">
+                <Text className="text-purple-800 font-medium mb-2">Panel de Espectador</Text>
+                <Text className="text-purple-700 text-sm">
+                  Puedes ver partidos y comentar sobre ellos.
+                </Text>
+              </View>
+            )}
+          </View>
+
+          {/* Quick Actions */}
+          <View className="py-6">
+            <Text className="text-xl font-semibold text-gray-900 mb-4">
+              Acciones Rápidas
+            </Text>
+            
+            <View className="space-y-3">
+              <Pressable className="bg-blue-600 rounded-xl p-4 items-center">
+                <Text className="text-white font-semibold">Ver Partidos</Text>
+              </Pressable>
+              
+              <Pressable className="bg-green-600 rounded-xl p-4 items-center">
+                <Text className="text-white font-semibold">Mi Perfil</Text>
+              </Pressable>
+              
+              {hasPermission('canViewStats') && (
+                <Pressable className="bg-purple-600 rounded-xl p-4 items-center">
+                  <Text className="text-white font-semibold">Estadísticas</Text>
+                </Pressable>
+              )}
+              
+              {hasPermission('canEditMatches') && (
+                <Pressable className="bg-orange-600 rounded-xl p-4 items-center">
+                  <Text className="text-white font-semibold">Editar Partidos</Text>
+                </Pressable>
+              )}
+            </View>
+          </View>
+
+          {/* Sign Out Button */}
+          <View className="py-8">
+            <Pressable 
+              onPress={handleSignOut}
+              className="bg-red-600 rounded-xl p-4 items-center"
+            >
+              <Text className="text-white font-semibold">Cerrar Sesión</Text>
+            </Pressable>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
     </AuthGuard>
   );
 }
