@@ -24,7 +24,7 @@ export default function RootLayout() {
 
   return (
     <UserProvider>
-      <Stack />
+      <Stack screenOptions={{ headerShown: false }} />
     </UserProvider>
   );
 }

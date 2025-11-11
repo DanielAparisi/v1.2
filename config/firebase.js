@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
-import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
-import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import { getAuth } from 'firebase/auth';
+// Note: AsyncStorage persistence is automatic in React Native with Firebase v9+
 
 import { getFirestore } from 'firebase/firestore';
 import Constants from 'expo-constants';
@@ -58,7 +58,6 @@ try {
   throw error;
 }
 
-export const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(ReactNativeAsyncStorage)
-}); 
+export const auth = getAuth(app); 
+// AsyncStorage persistence is handled automatically in React Native
 export const database = getFirestore();
