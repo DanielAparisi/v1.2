@@ -36,7 +36,7 @@ export default function HomeScreen() {
   // Handle navigation for authenticated users
   useEffect(() => {
     if (!loading && user) {
-      router.replace('/dashboard');
+      router.replace('/home');
     }
   }, [user, loading]);
 
@@ -147,7 +147,7 @@ export default function HomeScreen() {
       
       // Navigate to dashboard after short delay
       setTimeout(() => {
-        router.replace('/dashboard');
+        router.replace('/home');
       }, 2000);
     } else {
       Alert.alert('Error de Inicio de Sesión', result.error);

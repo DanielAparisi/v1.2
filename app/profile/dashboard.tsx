@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, Pressable, ScrollView, SafeAreaView } from 'react-native';
+import { View, Text, Pressable, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { useUser } from '../contexts/UserContext';
-import AuthGuard from '../components/AuthGuard';
+import { useUser } from '../../contexts/UserContext';
+import AuthGuard from '../../components/AuthGuard';
 import { useRouter } from 'expo-router';
 
 export default function Dashboard() {
