@@ -352,6 +352,44 @@ export default function HomeScreen() {
                       )}
                     </Pressable>
 
+                    {/* Divider */}
+                    <View className="flex-row items-center mb-4">
+                      <View className="flex-1 h-px bg-gray-300" />
+                      <Text className="text-gray-500 text-sm mx-4">or continue with</Text>
+                      <View className="flex-1 h-px bg-gray-300" />
+                    </View>
+
+                    {/* Social Login Buttons */}
+                    <View className="mb-6">
+                      {/* Google Button */}
+                      <Pressable 
+                        onPress={() => {
+                          // TODO: Implement Google Sign In
+                          console.log('Google Sign In pressed');
+                        }}
+                        className="bg-blue-500 rounded-xl py-4 items-center mb-3"
+                      >
+                        <View className="flex-row items-center">
+                          <Text className="text-white text-lg mr-3">G</Text>
+                          <Text className="text-white text-base font-medium">Sign in with Google</Text>
+                        </View>
+                      </Pressable>
+
+                      {/* Apple Button */}
+                      <Pressable 
+                        onPress={() => {
+                          // TODO: Implement Apple Sign In
+                          console.log('Apple Sign In pressed');
+                        }}
+                        className="bg-black rounded-xl py-4 items-center"
+                      >
+                        <View className="flex-row items-center">
+                          <Text className="text-white text-lg mr-3">🍎</Text>
+                          <Text className="text-white text-base font-medium">Sign in with Apple</Text>
+                        </View>
+                      </Pressable>
+                    </View>
+
                     {/* Toggle Sign In/Up */}
                     <View className="flex-row justify-center">
                       <Text className="text-gray-600 text-sm">
