@@ -9,6 +9,8 @@ import SuccessModal from '../components/SuccessModal';
 import { Link, useRouter } from 'expo-router';
 import AuthGuard from '../components/AuthGuard';
 import { useUser } from '../contexts/UserContext';
+import { Apple } from '../assets/svg/appleSvg.tsx';
+import { Google } from '../assets/svg/googleSvg';
 // ESTO ES EL LOGIN QUE SEERA LA RAIZ DE LA APP
 export default function HomeScreen() {
   const router = useRouter();
@@ -370,8 +372,8 @@ export default function HomeScreen() {
                         className="bg-blue-500 rounded-xl py-4 items-center mb-3"
                       >
                         <View className="flex-row items-center">
-                          <Text className="text-white text-lg mr-3">G</Text>
-                          <Text className="text-white text-base font-medium">Sign in with Google</Text>
+                          <Google width={20} height={20} />
+                          <Text className="text-white text-base font-medium ml-3">Sign in with Google</Text>
                         </View>
                       </Pressable>
 
@@ -384,8 +386,8 @@ export default function HomeScreen() {
                         className="bg-black rounded-xl py-4 items-center"
                       >
                         <View className="flex-row items-center">
-                          <Text className="text-white text-lg mr-3">🍎</Text>
-                          <Text className="text-white text-base font-medium">Sign in with Apple</Text>
+                          <Apple width={16} height={20} />
+                          <Text className="text-white text-base font-medium ml-3">Sign in with Apple</Text>
                         </View>
                       </Pressable>
                     </View>
